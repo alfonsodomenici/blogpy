@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 400px;margin:0 auto">
+<h1> All Posts  </h1>
+    {% for post in posts %}
+        <h3 class="bg-light">{{ post['title'] }}</h3>
+        <h5>in data: {{ post['created'] }}</h5>
+        <p class="bg-info">{{ post['content'] }}</p>
+        <hr>
+    {% endfor %}
+    <h5 class="bg-success"> fine elenco posts</h5>
+</div>    
+{% endblock %}

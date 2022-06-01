@@ -1,0 +1,84 @@
+{% extends 'basejs.html' %}
+
+{% block content %}
+<div style="max-width: 400px;margin:0 auto">
+    <h1>{% block title %} All Posts {% endblock %}</h1>
+    <input type="button" value="refresh dati" onclick="caricadatijson()"><br>
+    <div style="display:flex">
+        <div id="divposts"> ---- </div>
+        <div id="divcomments"> ---- </div>
+    </div>
+    <h5 class="bg-success"> fine elenco posts</h5>
+</div>
+
+
+<script>
+    function selcomment(id) {
+        let filejson = "http://127.0.0.1:5000/" + id + "/jsoncomments";
+        fetch(filejson)
+            .then(page => page.text())
+            .then(txjson => rendercommentsjson(txjson));
+    }
+
+
+
+    function caricadatijson() {
+        let filejson = "http://127.0.0.1:5000/jsonposts";
+        fetch(filejson)
+            .then(page => 
+                page.text())
+            .then(txjson => renderjson(txjson));
+    }
+
+    function rendercommentsjson(tx) {
+        const elenco = JSON.parse(tx);
+        let htmlok = "";
+        let id=""
+        for (let com of elenco) {
+            let htpost = '<p >'
+                + com['created'] + '</p>';
+            htpost += '<p >'
+                + com['comment']
+                + '</p>';
+            htpost += '<hr>';
+            htmlok += htpost;
+            id=com['idpost']
+        }
+        allcom=document.querySelectorAll(".comments");
+        for (let com of allcom){
+            com.innerHTML="";
+        }
+        dest="com"+  id;
+        document.getElementById(dest).innerHTML = htmlok;
+
+    }
+
+
+    function renderjson(tx) {
+        const elencopost = JSON.parse(tx);
+        let htmlok = "";
+        for (let post of elencopost) {
+            let htpost = '<h5 class="bg-light" onclick="selcomment('
+                + post['id']
+                + ')">'
+                + post['title'] + '</h5>';
+            
+                htpost += '<p class="bg-info">in data: '
+                + post['created']
+                + ' <br> '
+                + post['content']
+                + '</p>';
+                htpost += '<p class="comments bg-warning" id="com' 
+                + post['id']
+                + '"></p>';
+            htpost += '<hr>';
+            htmlok +=  htpost;
+        }
+        document.getElementById("divposts").innerHTML = htmlok;
+
+    }
+
+
+</script>
+
+{% endblock %}
